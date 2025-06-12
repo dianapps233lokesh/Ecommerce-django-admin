@@ -124,5 +124,24 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+JAZZMIN_SETTINGS = {
+    "site_title": "Ecommerce Admin",
+    "site_header": "Ecommerce Admin Portal",
+    "site_brand": "Ecommerce",
+    "welcome_sign": "Welcome to the Ecommerce Admin Portal",
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "topmenu_links": [],
+    "custom_links": {
+        "Home": [
+            {
+                "name": "Dashboard",
+                "url": "/admin/",
+                "icon": "fas fa-tachometer-alt",
+                "permissions": ["auth.view_user"]
+            }
+        ]
+    }
+}
 
-
+AUTH_USER_MODEL = 'ecommerce.CustomUser'
