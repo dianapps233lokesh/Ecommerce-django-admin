@@ -24,7 +24,6 @@ class CustomUserCreationForm(UserCreationForm):
         return user
 
 
-
 class CustomUserChangeForm(UserChangeForm):
     brand = forms.CharField(required=False)
 

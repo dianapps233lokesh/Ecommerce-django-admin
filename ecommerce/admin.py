@@ -5,6 +5,9 @@ from django.contrib import admin
 from django.template.response import TemplateResponse
 from django.contrib.auth import get_user_model
 from .forms import CustomUserCreationForm, CustomUserChangeForm
+from django.http import HttpResponse
+from datetime import datetime
+import csv
 
 from .models import Brand, CustomUser, Product, ProductVariant
 
@@ -23,6 +26,26 @@ class MyAdminSite(AdminSite):
 
 admin_site = MyAdminSite(name='myadmin')
 
+def export_to_csv(modeladmin, request, queryset):
+    """Export selected queryset to CSV."""
+    fieldnames = [field.name for field in queryset.model._meta.fields]
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment;filename={queryset.model.__name__}_{datetime.now().date()}.csv'
+
+    writer = csv.writer(response)
+
+    # Header
+    writer.writerow(fieldnames)
+
+    for obj in queryset:
+        row = [getattr(obj, field) for field in fieldnames]
+        writer.writerow(row)
+
+    return response
+
+export_to_csv.short_description = "Export selected to CSV"
+
 class ProductVariantInline(admin.TabularInline):
     model = ProductVariant
     extra = 0
@@ -32,6 +55,7 @@ class ProductVariantInline(admin.TabularInline):
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'brand', 'is_active')
     inlines = [ProductVariantInline]
+    actions=[export_to_csv]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -65,6 +89,7 @@ class ProductAdmin(admin.ModelAdmin):
 class ProductVariantAdmin(admin.ModelAdmin):
     list_display = ('product', 'size', 'color', 'stock_count')
     list_filter = ('product__brand',)
+    actions=[export_to_csv]
 
 admin_site.register(Brand)
 admin_site.register(Product, ProductAdmin)
@@ -98,3 +123,5 @@ class CustomUserAdmin(UserAdmin):
     )
 
 admin_site.register(CustomUser, CustomUserAdmin)
+
+
