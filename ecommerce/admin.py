@@ -10,7 +10,7 @@ from .models import Brand, CustomUser, Product, ProductVariant
 
 User = get_user_model()
 
-# ✅ 1. Custom Admin Site
+
 class MyAdminSite(AdminSite):
     site_header = 'Ecommerce Admin Panel'
 
@@ -20,10 +20,9 @@ class MyAdminSite(AdminSite):
         extra_context['total_products'] = Product.objects.count()
         return super().index(request, extra_context)
 
-# ✅ 2. Create admin_site instance
+
 admin_site = MyAdminSite(name='myadmin')
 
-# ✅ 3. Admin registrations use `admin_site`, NOT `admin`
 class ProductVariantInline(admin.TabularInline):
     model = ProductVariant
     extra = 0
@@ -44,7 +43,7 @@ class ProductAdmin(admin.ModelAdmin):
         form = super().get_form(request, obj, **kwargs)
 
         if not request.user.is_superuser:
-            # Disable brand field for brand admin
+   
             if 'brand' in form.base_fields:
                 form.base_fields['brand'].disabled = True
                 form.base_fields['brand'].initial = request.user.brand
@@ -52,7 +51,7 @@ class ProductAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         if not request.user.is_superuser:
-            obj.brand = request.user.brand  # force the brand assignment
+            obj.brand = request.user.brand  
         super().save_model(request, obj, form, change)
 
     def has_change_permission(self, request, obj=None):
@@ -67,8 +66,6 @@ class ProductVariantAdmin(admin.ModelAdmin):
     list_display = ('product', 'size', 'color', 'stock_count')
     list_filter = ('product__brand',)
 
-# ✅ Register models with the custom admin site
-# admin_site.register(CustomUser, UserAdmin)
 admin_site.register(Brand)
 admin_site.register(Product, ProductAdmin)
 admin_site.register(ProductVariant, ProductVariantAdmin)
@@ -83,7 +80,7 @@ class CustomUserAdmin(UserAdmin):
 
     list_display = ('username', 'email', 'brand', 'is_staff', 'is_superuser')
 
-    # ✅ Use only valid model fields — no usable_password!
+
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         ('Personal info', {'fields': ('email',)}),
@@ -93,7 +90,6 @@ class CustomUserAdmin(UserAdmin):
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
 
-    # ✅ add_fieldsets used when adding a new user via admin
     add_fieldsets = (
         (None, {
             'classes': ('wide',),

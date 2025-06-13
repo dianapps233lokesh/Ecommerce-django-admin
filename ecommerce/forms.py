@@ -1,4 +1,3 @@
-# shop/forms.py
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser, Brand
@@ -14,18 +13,18 @@ class CustomUserCreationForm(UserCreationForm):
         brand_name = self.cleaned_data.get('brand')
         if brand_name:
             brand, _ = Brand.objects.get_or_create(name=brand_name.strip())
-            return brand  # ✅ Return Brand instance
+            return brand  
         return None
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.brand = self.cleaned_data.get('brand')  # ✅ Already converted
+        user.brand = self.cleaned_data.get('brand')  
         if commit:
             user.save()
         return user
 
 
-# shop/forms.py
+
 class CustomUserChangeForm(UserChangeForm):
     brand = forms.CharField(required=False)
 
@@ -36,7 +35,7 @@ class CustomUserChangeForm(UserChangeForm):
     def clean_brand(self):
         brand_input = self.cleaned_data.get('brand')
         if brand_input:
-            # If it's a number, assume it's a PK (id)
+          
             try:
                 brand = Brand.objects.get(pk=int(brand_input))
             except (ValueError, Brand.DoesNotExist):
@@ -46,7 +45,6 @@ class CustomUserChangeForm(UserChangeForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.brand = self.cleaned_data.get('brand')  # Already converted
-        if commit:
-            user.save()
+        user.brand = self.cleaned_data.get('brand')  
+        user.save()
         return user

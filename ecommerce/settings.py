@@ -145,3 +145,4 @@ JAZZMIN_SETTINGS = {
 }
 
 AUTH_USER_MODEL = 'ecommerce.CustomUser'
+
