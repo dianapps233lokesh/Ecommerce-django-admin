@@ -1,4 +1,3 @@
-# shop/admin.py
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.admin import AdminSite
 from django.contrib import admin
